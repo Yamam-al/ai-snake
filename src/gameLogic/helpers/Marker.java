@@ -1,3 +1,5 @@
+package gameLogic.helpers;
+
 public enum Marker {
     SNAKE_HEAD,
     SNAKE_NODE,

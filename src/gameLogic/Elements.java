@@ -1,9 +1,15 @@
+package gameLogic;
+
+import gameLogic.helpers.Direction;
+import gameLogic.helpers.Marker;
+import gameLogic.helpers.Position;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class ElementStatus {
+public class Elements {
     private final int width;
     private final int height;
     private final Random random;
@@ -15,7 +21,7 @@ public class ElementStatus {
     private ArrayList<SnakeNode> snake;
     private ArrayList<SnakeNode> checkPointSnake;
 
-    public ElementStatus(int width, int height, Random random) {
+    public Elements(int width, int height, Random random) {
         this.width = width;
         this.height = height;
         this.random = random;
@@ -44,7 +50,7 @@ public class ElementStatus {
         int yS = random.nextInt(height);
         int direction = random.nextInt(4);
         Position position = new Position(xS, yS);
-        //update Gridworld
+        //update gameLogic.Gridworld
         field.updateField(position, Marker.SNAKE_HEAD);
         return new SnakeNode(position, Direction.getInt(direction));
     }

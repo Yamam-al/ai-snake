@@ -1,3 +1,5 @@
+package gameLogic.helpers;
+
 public enum Direction {
     UP,
     LEFT,

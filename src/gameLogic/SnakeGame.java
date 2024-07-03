@@ -1,8 +1,13 @@
+package gameLogic;
+
+import gameLogic.helpers.Direction;
+import gameLogic.helpers.Position;
+
 import java.util.Random;
 
 public class SnakeGame {
 
-    private ElementStatus elementStatus;
+    private Elements elements;
     private final int width;
     private final int height;
 
@@ -11,33 +16,33 @@ public class SnakeGame {
 
 
     public SnakeGame (int width, int height, Random random) {
-        elementStatus = new ElementStatus(width, height, random);
+        elements = new Elements(width, height, random);
         this.width = width;
         this.height = height;
     }
 
     public int step (Direction direction) {
-        System.out.println("Direction " + direction);
-        int reward = valueOfNextPosition(elementStatus.getHeadPosition(), elementStatus.getApplePosition(), direction);
+        System.out.println("gameLogic.helpers.Direction " + direction);
+        int reward = valueOfNextPosition(elements.getHeadPosition(), elements.getApplePosition(), direction);
         System.out.println("Reward " + reward);
         if (reward < 0) System.out.println("Game Over"); //TODO reset to last checkpoint with snake-position list
         else if (reward > 0) {
-            elementStatus.spawnApple();
-            elementStatus.moveAndGrow(direction);
+            elements.spawnApple();
+            elements.moveAndGrow(direction);
         }
-        else elementStatus.move(direction);
+        else elements.move(direction);
         return reward;
     }
 
     private int valueOfNextPosition (Position posSnake, Position posApple, Direction direction) {
         posSnake.move(direction);
         if (!(posSnake.getX()<width && posSnake.getY()<height)) return penalty;
-        else if (posSnake.equals(elementStatus.getSnakePositions())) return penalty; //checks if snake runs into itself
+        else if (posSnake.equals(elements.getSnakePositions())) return penalty; //checks if snake runs into itself
         else if (posSnake.equals(posApple)) return appleReward;
         else return 0;
     }
 
     public void resetGameLevel () {
-        elementStatus.reset();
+        elements.reset();
     }
 }

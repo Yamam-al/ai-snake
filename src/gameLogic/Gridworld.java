@@ -1,4 +1,7 @@
-import java.util.Arrays;
+package gameLogic;
+
+import gameLogic.helpers.Marker;
+import gameLogic.helpers.Position;
 
 public class Gridworld {
 

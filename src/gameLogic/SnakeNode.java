@@ -1,3 +1,8 @@
+package gameLogic;
+
+import gameLogic.helpers.Direction;
+import gameLogic.helpers.Position;
+
 public class SnakeNode {
 
     private Position position;
