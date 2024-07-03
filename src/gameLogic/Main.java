@@ -1,3 +1,5 @@
+package gameLogic;
+
 import gameLogic.helpers.Direction;
 import gameLogic.SnakeGame;
 
