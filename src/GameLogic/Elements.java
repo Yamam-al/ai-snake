@@ -108,4 +108,47 @@ public class Elements {
     public List<Position> getSnakePositions() {
         return snake.stream().map(s -> s.getPosition().copy()).collect(Collectors.toList());
     }
+
+    public int[][] getEnvironment () {
+        int[][] environment = new int[8][3]; //Apple, Wall, Snake
+        Position snakePosition = snake.get(0).getPosition().copy();
+        //Apple
+        int xA = snakePosition.getX() - apple.getX();
+        int yA = snakePosition.getY() - apple.getY();
+        if (xA < 0 && yA == 0) { //Apple straight on the right
+            environment[2][0] = xA*(-1);
+            environment[6][0] = xA;
+        } else if (xA > 0 && yA == 0) { //Apple straight on the left
+            environment[6][0] = xA;
+            environment[2][0] = xA*(-1);
+        } else if (yA < 0 && xA == 0) { //Apple is straight below
+            environment[4][0] = yA*(-1);
+            environment[0][0] = yA;
+        } else if (yA > 0 && xA == 0) { //Apple is straight above
+            environment[0][0] = yA;
+            environment[4][0] = yA*(-1);
+        } else if (xA < 0 && yA < 0){ //Apple is on diagonal right below
+            environment[3][0] = xA+yA*(-1);
+            environment[7][0] = xA+yA;
+        } else if (xA < 0 && yA > 0){ //diagonal right above
+            environment[1][0] = xA*(-1)+yA;
+            environment[5][0] = xA+yA*(-1);
+        } else if (xA > 0 && yA < 0){ //diagonal left below
+            environment[5][0] = xA+yA*(-1);
+            environment[1][0] = xA*(-1)+yA;
+        } else { //diagonal left above
+            environment[7][0] = xA+yA;
+            environment[3][0] = xA+yA*(-1);
+        }
+        //Walls
+        int w = width-snakePosition.getX();
+        environment[1][2] = w;
+        environment[1][6] = snakePosition.getX() + 1;
+        int h = height-snakePosition.getY();
+        environment[1][4] = h;
+        environment[1][0] = snakePosition.getY() + 1;
+        //TODO should the wall distance also be set on diagonals?
+        //TODO Snake
+        return environment;
+    }
 }

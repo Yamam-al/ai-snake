@@ -1,6 +1,7 @@
 package GameLogic;
 
 import GameLogic.helpers.Direction;
+import GameLogic.helpers.GameStatus;
 import GameLogic.helpers.Position;
 
 import java.util.Random;
@@ -21,17 +22,16 @@ public class SnakeGame {
         this.height = height;
     }
 
-    public int step (Direction direction) {
-        System.out.println("gameLogic.helpers.Direction " + direction);
+    public GameStatus step (Direction direction) {
         int reward = valueOfNextPosition(elements.getHeadPosition(), elements.getApplePosition(), direction);
-        System.out.println("Reward " + reward);
-        if (reward < 0) System.out.println("Game Over"); //TODO reset to last checkpoint with snake-position list
+        if (reward < 0) return GameStatus.GAME_OVER;
         else if (reward > 0) {
             elements.spawnApple();
             elements.moveAndGrow(direction);
+            return GameStatus.APPLE;
         }
         else elements.move(direction);
-        return reward;
+        return GameStatus.NOTHING;
     }
 
     private int valueOfNextPosition (Position posSnake, Position posApple, Direction direction) {
@@ -40,6 +40,10 @@ public class SnakeGame {
         else if (posSnake.equals(elements.getSnakePositions())) return penalty; //checks if snake runs into itself
         else if (posSnake.equals(posApple)) return appleReward;
         else return 0;
+    }
+
+    public int[][] getEnvironment () {
+        return elements.getEnvironment();
     }
 
     public void resetGameLevel () {

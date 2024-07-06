@@ -1,6 +1,7 @@
 package GeneticAlgo;
 
 import GameLogic.helpers.Direction;
+import GameLogic.helpers.GameStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +61,7 @@ public class GeneticAlgo {
         //combine two parents
         double[] genomeParent1 = parent1.getGenome();
         double[] genomeParent2 = parent2.getGenome();
-        double[] childGenome = new double[6];
+        double[] childGenome = new double[size];
         System.arraycopy(genomeParent1, 0, childGenome, 0, crossoverPoint);
         System.arraycopy(genomeParent2, crossoverPoint, childGenome, crossoverPoint, genomeParent2.length-crossoverPoint);
         //mutate child
@@ -79,7 +80,12 @@ public class GeneticAlgo {
 
     private double calcFitness (Individual individual){
         double fitness = 0.0;
-        //TODO calculate fitness for given weights using neural network
+        boolean gameOver = false;
+        while (!gameOver) {
+            Direction direction = chooseDirection(individual);
+            GameStatus gameStatus = individual.moveSnake(direction);
+            //TODO calculate fitness for given weights using neural network
+        }
         individual.setFitness(fitness);
         return fitness;
     }
@@ -89,6 +95,7 @@ public class GeneticAlgo {
     //helper Method for calcFitness: Chooses direction based on environment of snake
     private Direction chooseDirection (Individual individual){ //TODO snake environment
         Direction direction = Direction.UP;
+        int[][] environment = individual.getEnvironment();
         //TODO calculate output (direction) of Neural Network based on snake environment (input) and individual.getGenome (weights)
         individual.addDirection(direction);
         return direction;

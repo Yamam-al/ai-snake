@@ -1,6 +1,7 @@
 package GameLogic;
 
 import GameLogic.helpers.Direction;
+import GameLogic.helpers.GameStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class Main {
 
         boolean gameRunning = true;
         while (directions.size() != 0 && gameRunning) {
-            if (game.step(directions.remove(0)) < 0) {
+            if (game.step(directions.remove(0)) == GameStatus.GAME_OVER) {
                 gameRunning = false;
                 game.resetGameLevel();
             }

@@ -1,5 +1,7 @@
 package GeneticAlgo;
+import GameLogic.SnakeGame;
 import GameLogic.helpers.Direction;
+import GameLogic.helpers.GameStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +13,8 @@ public class Individual {
     private double fitness;
 
     private ArrayList<Direction> directions;
+
+    private SnakeGame snakeGame;
 
     public Individual (double[] genome) {
         this.genome = genome;
@@ -36,6 +40,14 @@ public class Individual {
 
     public ArrayList<Direction> getDirections () {
         return directions;
+    }
+
+    public GameStatus moveSnake (Direction direction) {
+        return snakeGame.step(direction);
+    }
+
+    public int[][] getEnvironment () {
+        return snakeGame.getEnvironment();
     }
 
     @Override
