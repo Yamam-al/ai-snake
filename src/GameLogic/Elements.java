@@ -1,8 +1,8 @@
-package gameLogic;
+package GameLogic;
 
-import gameLogic.helpers.Direction;
-import gameLogic.helpers.Marker;
-import gameLogic.helpers.Position;
+import GameLogic.helpers.Direction;
+import GameLogic.helpers.Marker;
+import GameLogic.helpers.Position;
 
 import java.util.ArrayList;
 import java.util.List;

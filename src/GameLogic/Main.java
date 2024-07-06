@@ -1,7 +1,6 @@
-package gameLogic;
+package GameLogic;
 
-import gameLogic.helpers.Direction;
-import gameLogic.SnakeGame;
+import GameLogic.helpers.Direction;
 
 import java.util.ArrayList;
 import java.util.List;

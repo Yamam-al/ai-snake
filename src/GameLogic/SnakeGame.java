@@ -1,7 +1,7 @@
-package gameLogic;
+package GameLogic;
 
-import gameLogic.helpers.Direction;
-import gameLogic.helpers.Position;
+import GameLogic.helpers.Direction;
+import GameLogic.helpers.Position;
 
 import java.util.Random;
 

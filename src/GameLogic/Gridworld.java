@@ -1,7 +1,7 @@
-package gameLogic;
+package GameLogic;
 
-import gameLogic.helpers.Marker;
-import gameLogic.helpers.Position;
+import GameLogic.helpers.Marker;
+import GameLogic.helpers.Position;
 
 public class Gridworld {
 

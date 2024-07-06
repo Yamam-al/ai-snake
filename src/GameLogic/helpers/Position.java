@@ -1,4 +1,4 @@
-package gameLogic.helpers;
+package GameLogic.helpers;
 
 import java.util.List;
 import java.util.Objects;

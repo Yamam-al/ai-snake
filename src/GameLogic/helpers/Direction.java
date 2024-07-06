@@ -1,4 +1,4 @@
-package gameLogic.helpers;
+package GameLogic.helpers;
 
 public enum Direction {
     UP,
