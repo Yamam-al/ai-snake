@@ -48,31 +48,42 @@ public class Elements {
         //spawn Snake with random position
         int xS = random.nextInt(width);
         int yS = random.nextInt(height);
-        int direction = random.nextInt(4);
         Position position = new Position(xS, yS);
+        //Check that snake does not get spawned on top of apple
+        while(position.equals(apple)) {
+            xS = random.nextInt(width);
+            yS = random.nextInt(height);
+        }
+        int direction = random.nextInt(4);
         //update gameLogic.Gridworld
         field.updateField(position, Marker.SNAKE_HEAD);
         return new SnakeNode(position, Direction.getInt(direction));
     }
 
     public void move(Direction direction) {
-        Direction headDirec = snake.get(0).getDirection();
         snake.get(0).setDirection(direction);
-        field.updateField(snake.get(0).getPosition(), null); //Erase head
+        System.out.println("Erasing head at: " + snake.get(0).getPosition());
+        field.updateField(snake.get(0).getPosition(), null); // Erase head
         snake.get(0).getPosition().move(direction);
+        System.out.println("New head position: " + snake.get(0).getPosition());
         field.updateField(snake.get(0).getPosition(), Marker.SNAKE_HEAD);
 
         SnakeNode currentNode = snake.get(0);
         for (int i = 1; i < snake.size(); i++) {
             Direction curDirec = currentNode.getDirection();
-            currentNode = snake.get(i); //get next node
-            if (i == snake.size() - 1) field.updateField(currentNode.getPosition(), null); //Erase last snake part
+            currentNode = snake.get(i); // get next node
+            if (i == snake.size() - 1) {
+                System.out.println("Erasing last part at: " + currentNode.getPosition());
+                field.updateField(currentNode.getPosition(), null); // Erase last snake part
+            }
             currentNode.getPosition().move(currentNode.getDirection());
+            System.out.println("Node " + i + " new position: " + currentNode.getPosition());
             field.updateField(currentNode.getPosition(), Marker.SNAKE_NODE);
             currentNode.setDirection(curDirec);
         }
         field.printField();
     }
+
 
     public void moveAndGrow(Direction direction) {
         Position lastHeadPos = snake.get(0).getPosition().copy();

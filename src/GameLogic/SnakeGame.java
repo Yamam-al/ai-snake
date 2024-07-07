@@ -15,7 +15,6 @@ public class SnakeGame {
     private final int appleReward = 1;
     private final int penalty = -1;
 
-
     public SnakeGame (int width, int height, Random random, boolean print) {
         elements = new Elements(width, height, random, print);
         this.width = width;
@@ -25,7 +24,10 @@ public class SnakeGame {
 
     public GameStatus step (Direction direction) {
         int reward = valueOfNextPosition(elements.getHeadPosition(), elements.getApplePosition(), direction);
-        if (reward < 0) return GameStatus.GAME_OVER;
+        if (reward < 0) {
+            System.err.println("Game over detected @ step");
+            return GameStatus.GAME_OVER;
+        }
         else if (reward > 0) {
             elements.spawnApple();
             elements.moveAndGrow(direction);
@@ -37,15 +39,27 @@ public class SnakeGame {
         }
     }
 
-    private int valueOfNextPosition (Position posSnake, Position posApple, Direction direction) {
-        posSnake.move(direction); //moves copy of position
-        if (posSnake.getX()>=width || posSnake.getY()>=height || posSnake.getX() < 0 || posSnake.getY() < 0) {
+    private int valueOfNextPosition(Position posSnake, Position posApple, Direction direction) {
+        Position nextPosition = posSnake.copy();
+        nextPosition.move(direction);
+        System.out.println("Checking position: " + nextPosition);
+
+        if (nextPosition.getX() >= width || nextPosition.getY() >= height || nextPosition.getX() < 0 || nextPosition.getY() < 0) {
+            System.out.println("Hit the wall at: " + nextPosition);
+            System.err.println("Game over triggered @ valueOfNextPosition: Wall");
             return penalty;
+        } else if (elements.getSnakePositions().contains(nextPosition)) {// checks if snake runs into itself
+            System.out.println("Ran into itself at: " + nextPosition);
+            System.err.println("Game over triggered @ valueOfNextPosition: Snake");
+            return penalty;
+        } else if (nextPosition.equals(posApple)) {
+            System.out.println("Found apple at: " + nextPosition);
+            return appleReward;
+        } else {
+            return 0;
         }
-        else if (posSnake.equals(elements.getSnakePositions())) return penalty; //checks if snake runs into itself
-        else if (posSnake.equals(posApple)) return appleReward;
-        else return 0;
     }
+
 
     public int[][] getEnvironment () {
         return elements.getEnvironment();

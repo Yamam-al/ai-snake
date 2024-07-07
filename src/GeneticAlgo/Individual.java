@@ -62,7 +62,9 @@ public class Individual {
     }
 
     public GameStatus moveSnake (Direction direction) {
-        return snakeGame.step(direction);
+        GameStatus status = snakeGame.step(direction);
+        if(status ==GameStatus.GAME_OVER) System.err.println("Game over detected @ moveSnake");
+        return status;
     }
 
     public int[][] getEnvironment () {
