@@ -64,6 +64,6 @@ public class Position {
 
     @Override
     public String toString() {
-        return String.format("gameLogic.helpers.Position(%d, %d)", x, y);
+        return String.format("Position(%d, %d)", x, y);
     }
 }

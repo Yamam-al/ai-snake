@@ -4,6 +4,7 @@ import GameLogic.helpers.Direction;
 import GameLogic.helpers.Marker;
 import GameLogic.helpers.Position;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,6 +18,7 @@ public class Elements {
     private Gridworld checkPointField;
 
     private Position apple;
+    private Position checkPointApple;
 
     private ArrayList<SnakeNode> snake;
     private ArrayList<SnakeNode> checkPointSnake;
@@ -29,8 +31,8 @@ public class Elements {
 
         snake = new ArrayList<>();
         snake.add(spawnSnake());
-        setCheckPoint();
         spawnApple();
+        setCheckPoint();
 
         field.printField();
     }
@@ -62,10 +64,8 @@ public class Elements {
 
     public void move(Direction direction) {
         snake.get(0).setDirection(direction);
-        System.out.println("Erasing head at: " + snake.get(0).getPosition());
         field.updateField(snake.get(0).getPosition(), null); // Erase head
         snake.get(0).getPosition().move(direction);
-        System.out.println("New head position: " + snake.get(0).getPosition());
         field.updateField(snake.get(0).getPosition(), Marker.SNAKE_HEAD);
 
         SnakeNode currentNode = snake.get(0);
@@ -73,11 +73,9 @@ public class Elements {
             Direction curDirec = currentNode.getDirection();
             currentNode = snake.get(i); // get next node
             if (i == snake.size() - 1) {
-                System.out.println("Erasing last part at: " + currentNode.getPosition());
                 field.updateField(currentNode.getPosition(), null); // Erase last snake part
             }
             currentNode.getPosition().move(currentNode.getDirection());
-            System.out.println("Node " + i + " new position: " + currentNode.getPosition());
             field.updateField(currentNode.getPosition(), Marker.SNAKE_NODE);
             currentNode.setDirection(curDirec);
         }
@@ -91,21 +89,30 @@ public class Elements {
         snake.get(0).getPosition().move(direction);
         field.updateField(snake.get(0).getPosition(), Marker.SNAKE_HEAD);
         snake.add(1, (new SnakeNode(lastHeadPos, direction))); //add new node just behind the head
-        setCheckPoint();
+        //setCheckPoint();
         field.printField();
     }
 
     public void reset() {
-        System.out.println("\n" + "Checkpoint:");
         snake = checkPointSnake;
         field = checkPointField;
-        setCheckPoint();
+        apple = checkPointApple;
+        //setCheckPoint();
         field.printField();
     }
 
     private void setCheckPoint() {
-        checkPointSnake = new ArrayList<>(snake);
+        checkPointSnake = copySnake(snake);
         checkPointField = new Gridworld(field);
+        checkPointApple = apple.copy();
+    }
+
+    private ArrayList<SnakeNode> copySnake (ArrayList<SnakeNode> original) {
+        ArrayList<SnakeNode> copy = new ArrayList<>();
+        for(SnakeNode node : original) {
+            copy.add(new SnakeNode(node.getPosition().copy(),node.getDirection()));
+        }
+        return copy;
     }
 
     public Position getApplePosition() {

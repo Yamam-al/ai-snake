@@ -48,14 +48,12 @@ public class SnakeGame {
     private int valueOfNextPosition(Position posSnake, Position posApple, Direction direction) {
         Position nextPosition = posSnake.copy();
         nextPosition.move(direction);
-        System.out.println("Checking position: " + nextPosition);
 
         if (nextPosition.getX() >= width || nextPosition.getY() >= height || nextPosition.getX() < 0 || nextPosition.getY() < 0) {
             return penalty;
         } else if (elements.getSnakePositions().contains(nextPosition)) {
             return penalty;
         } else if (nextPosition.equals(posApple)) {
-            System.out.println("Found apple at: " + nextPosition);
             return appleReward;
         } else {
             return 0;
