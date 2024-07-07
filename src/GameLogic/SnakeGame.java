@@ -16,8 +16,8 @@ public class SnakeGame {
     private final int penalty = -1;
 
 
-    public SnakeGame (int width, int height, Random random) {
-        elements = new Elements(width, height, random);
+    public SnakeGame (int width, int height, Random random, boolean print) {
+        elements = new Elements(width, height, random, print);
         this.width = width;
         this.height = height;
         if (print) System.out.println("Game started");
@@ -38,8 +38,10 @@ public class SnakeGame {
     }
 
     private int valueOfNextPosition (Position posSnake, Position posApple, Direction direction) {
-        posSnake.move(direction);
-        if (!(posSnake.getX()<width && posSnake.getY()<height)) return penalty;
+        posSnake.move(direction); //moves copy of position
+        if (posSnake.getX()>=width || posSnake.getY()>=height || posSnake.getX() < 0 || posSnake.getY() < 0) {
+            return penalty;
+        }
         else if (posSnake.equals(elements.getSnakePositions())) return penalty; //checks if snake runs into itself
         else if (posSnake.equals(posApple)) return appleReward;
         else return 0;

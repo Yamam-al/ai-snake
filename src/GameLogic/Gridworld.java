@@ -7,10 +7,11 @@ public class Gridworld {
 
     private final int width;
     private final int height;
+    private boolean print;
 
     private Marker[][] field;
 
-    public Gridworld (int width, int height) {
+    public Gridworld (int width, int height, boolean print) {
         this.width = width;
         this.height = height;
         field = new Marker[width][height];
@@ -36,20 +37,22 @@ public class Gridworld {
     }
 
     public void printField() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(symbolMulti('_',width*4+1));
-        for(int j = 0; j<height; j++){
-            for(int i =0; i<width;i++){
-                if(field[i][j]==null){
-                    stringBuilder.append("|   ");
-                    continue;
-                }
-                stringBuilder.append(String.format("| %s ",field[i][j]));
-            }
-            stringBuilder.append("|\n");
+        if(print) {
+            StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(symbolMulti('_',width*4+1));
+            for(int j = 0; j<height; j++){
+                for(int i =0; i<width;i++){
+                    if(field[i][j]==null){
+                        stringBuilder.append("|   ");
+                        continue;
+                    }
+                    stringBuilder.append(String.format("| %s ",field[i][j]));
+                }
+                stringBuilder.append("|\n");
+                stringBuilder.append(symbolMulti('_',width*4+1));
+            }
+            System.out.println(stringBuilder);
         }
-        System.out.println(stringBuilder);
     }
 
     private String symbolMulti(char symbol, int amount){

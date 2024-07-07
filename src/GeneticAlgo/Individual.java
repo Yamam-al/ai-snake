@@ -19,7 +19,7 @@ public class Individual {
 
     public Individual (double[][][] genome,double bias, SnakeGame snakeGame) {
         this.genome = genome;
-        fitness = Double.MAX_VALUE;
+        fitness = Double.MIN_VALUE;
         directions = new ArrayList<>();
         this.snakeGame = snakeGame;
         this.bias = bias;
@@ -67,6 +67,6 @@ public class Individual {
 
     @Override
     public String toString() {
-        return Arrays.toString(genome);
+        return String.valueOf(fitness);
     }
 }

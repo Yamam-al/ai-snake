@@ -21,11 +21,11 @@ public class Elements {
     private ArrayList<SnakeNode> snake;
     private ArrayList<SnakeNode> checkPointSnake;
 
-    public Elements(int width, int height, Random random) {
+    public Elements(int width, int height, Random random, boolean print) {
         this.width = width;
         this.height = height;
         this.random = random;
-        this.field = new Gridworld(width, height);
+        this.field = new Gridworld(width, height, print);
 
         snake = new ArrayList<>();
         snake.add(spawnSnake());
