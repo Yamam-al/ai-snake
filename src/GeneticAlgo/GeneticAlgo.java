@@ -65,16 +65,21 @@ public class GeneticAlgo {
             }
             System.out.println("Generation: " + generation++);
             population = children;
+        }
+        // Print best individual
+        Individual bestIndividual = population.get(0);
+        System.out.println("Best individual: " + bestIndividual);
+        System.out.println("Fitness: " + bestIndividual.getFitness());
 
+        // Replay the moves of the best individual and print each step
+        SnakeGame game = bestIndividual.getSnakeGame();
+        game.reset(); // Reset to initial state
+        game.setPrint(true); // Enable printing of the game state
+        for (Direction direction : bestIndividual.getDirections()) {
+            game.move(direction);
+             // Print the game state after each move
         }
-        //Print best individual
-        System.out.println("Best individual: " + population.get(0));
-        System.out.println("Fitness: " + population.get(0).getFitness());
-        SnakeGame game = new SnakeGame(widthField, heightField, random, true);
-        for (Direction direction : population.get(0).getDirections()) {
-            game.step(direction);
-        }
-        System.out.println("Directions: " + population.get(0).getDirections());
+        System.out.println("Directions: " + bestIndividual.getDirections());
     }
 
     //Combine two parents for a child and mutate it
@@ -92,7 +97,7 @@ public class GeneticAlgo {
             }
         }
         //set bias
-        double averageBias = parent1.getBias() + parent2.getBias() / 2;
+        double averageBias = (parent1.getBias() + parent2.getBias()) / 2;
         Individual child = new Individual(childGenome, averageBias, new SnakeGame(widthField, heightField, random, false));
         //mutate child
         if (random.nextInt((int) (1 / mutationRate)) == 0) {
@@ -122,7 +127,7 @@ public class GeneticAlgo {
             }
         }
         //set bias
-        double averageBias = parent1.getBias() + parent2.getBias() / 2;
+        double averageBias = (parent1.getBias() + parent2.getBias()) / 2;
         Individual child = new Individual(childGenome, averageBias, new SnakeGame(widthField, heightField, random, false));
         //mutate child
         if (random.nextInt((int) (1 / mutationRate)) == 0) {
@@ -146,35 +151,41 @@ public class GeneticAlgo {
     }
 
     private void calcFitness(Individual individual) {
-        individual.getSnakeGame().resetGameLevel(); // Spiel zurücksetzen
         double fitness = 0.0;
         int initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
 
-        for (int i = 0; i < 100 ; i++) {
+        for (int i = 0; i < 100; i++) {
+            if (individual.getSnakeGame().isGameOver()) {
+                break; // Stop the loop if the game is over
+            }
+
             Direction direction = chooseDirection(individual);
-            GameStatus gameStatus = individual.moveSnake(direction); //Outcome of last step
+            GameStatus gameStatus = individual.moveSnake(direction); // Outcome of last step
             int currentDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
+
             if (gameStatus == GameStatus.GAME_OVER) {
-                System.err.println("Game over detected @ calcFitness");
-                fitness -= 5; // negative penalty for game over
-                individual.setFitness(fitness); // set fitness
-                return; // Game over
+                fitness -= 5; // Negative penalty for game over
+                break; // Exit the loop if the game is over
             } else if (gameStatus == GameStatus.APPLE) {
-                fitness += 10; // reward for eating an apple
+                fitness += 10; // Reward for eating an apple
                 initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition()); // Reset distance after eating an apple
             } else {
-                fitness += 0.1; // small reward for a valid move
+                fitness += 0.1; // Small reward for a valid move
             }
+
             // Reward for getting closer to the apple
             if (currentDistance < initialDistance) {
                 fitness += (initialDistance - currentDistance) * 0.5;
             } else {
                 fitness -= (currentDistance - initialDistance) * 0.5;
             }
+
             initialDistance = currentDistance;
         }
+
         individual.setFitness(fitness);
     }
+
 
     private int getDistance(Position head, Position apple) {
         return Math.abs(head.getX() - apple.getX()) + Math.abs(head.getY() - apple.getY());

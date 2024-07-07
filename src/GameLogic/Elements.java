@@ -201,4 +201,8 @@ public class Elements {
 
         return environment;
     }
+
+    public void setPrint(boolean b) {
+        field.setPrint(b);
+    }
 }

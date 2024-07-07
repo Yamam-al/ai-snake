@@ -1,32 +1,27 @@
 package GeneticAlgo;
+
 import GameLogic.SnakeGame;
 import GameLogic.helpers.Direction;
 import GameLogic.helpers.GameStatus;
 import GameLogic.helpers.Position;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Individual {
-    public SnakeGame getSnakeGame() {
-        return snakeGame;
-    }
-
     private double[][][] genome;
-
     private double fitness;
     private double bias;
-
     private ArrayList<Direction> directions;
-
     private SnakeGame snakeGame;
+    private ArrayList<int[][]> gameStates;
 
-    public Individual (double[][][] genome,double bias, SnakeGame snakeGame) {
+    public Individual(double[][][] genome, double bias, SnakeGame snakeGame) {
         this.genome = genome;
-        fitness = Double.MIN_VALUE;
-        directions = new ArrayList<>();
+        this.fitness = Double.MIN_VALUE;
+        this.directions = new ArrayList<>();
         this.snakeGame = snakeGame;
         this.bias = bias;
+        this.gameStates = new ArrayList<>();
     }
 
     public double[][][] getGenome() {
@@ -57,17 +52,19 @@ public class Individual {
         directions.add(direction);
     }
 
-    public ArrayList<Direction> getDirections () {
+    public ArrayList<Direction> getDirections() {
         return directions;
     }
 
-    public GameStatus moveSnake (Direction direction) {
-        GameStatus status = snakeGame.step(direction);
-        if(status ==GameStatus.GAME_OVER) System.err.println("Game over detected @ moveSnake");
+    public GameStatus moveSnake(Direction direction) {
+        GameStatus status = snakeGame.move(direction);
+        if (status == GameStatus.GAME_OVER) {
+        }
+        saveGameState();
         return status;
     }
 
-    public int[][] getEnvironment () {
+    public int[][] getEnvironment() {
         return snakeGame.getEnvironment();
     }
 
@@ -75,6 +72,7 @@ public class Individual {
     public String toString() {
         return String.valueOf(fitness);
     }
+
     public Position getHeadPosition() {
         return snakeGame.getHeadPosition();
     }
@@ -83,4 +81,20 @@ public class Individual {
         return snakeGame.getApplePosition();
     }
 
+    private void saveGameState() {
+        int[][] currentState = snakeGame.getEnvironment();
+        int[][] stateCopy = new int[currentState.length][];
+        for (int i = 0; i < currentState.length; i++) {
+            stateCopy[i] = currentState[i].clone();
+        }
+        gameStates.add(stateCopy);
+    }
+
+    public ArrayList<int[][]> getGameStates() {
+        return gameStates;
+    }
+
+    public SnakeGame getSnakeGame() {
+        return snakeGame;
+    }
 }

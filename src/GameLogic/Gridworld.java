@@ -63,4 +63,8 @@ public class Gridworld {
         s.append("\n");
         return s.toString();
     }
+
+    public void setPrint(boolean b) {
+        print = b;
+    }
 }
