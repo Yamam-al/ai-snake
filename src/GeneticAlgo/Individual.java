@@ -2,11 +2,15 @@ package GeneticAlgo;
 import GameLogic.SnakeGame;
 import GameLogic.helpers.Direction;
 import GameLogic.helpers.GameStatus;
+import GameLogic.helpers.Position;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Individual {
+    public SnakeGame getSnakeGame() {
+        return snakeGame;
+    }
 
     private double[][][] genome;
 
@@ -69,4 +73,12 @@ public class Individual {
     public String toString() {
         return String.valueOf(fitness);
     }
+    public Position getHeadPosition() {
+        return snakeGame.getHeadPosition();
+    }
+
+    public Position getApplePosition() {
+        return snakeGame.getApplePosition();
+    }
+
 }

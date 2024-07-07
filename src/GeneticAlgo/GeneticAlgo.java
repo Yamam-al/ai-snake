@@ -3,6 +3,7 @@ package GeneticAlgo;
 import GameLogic.SnakeGame;
 import GameLogic.helpers.Direction;
 import GameLogic.helpers.GameStatus;
+import GameLogic.helpers.Position;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -144,24 +145,39 @@ public class GeneticAlgo {
         return new Individual(genome, random.nextDouble(), new SnakeGame(widthField, heightField, random, false));
     }
 
-    private double calcFitness(Individual individual) {
+    private void calcFitness(Individual individual) {
+        individual.getSnakeGame().resetGameLevel(); // Spiel zurücksetzen
         double fitness = 0.0;
-        boolean gameOver = false;
-        for (int i = 0; i < 100 && !gameOver; i++) {
+        int initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
+
+        for (int i = 0; i < 100 ; i++) {
             Direction direction = chooseDirection(individual);
-            GameStatus gameStatus = individual.moveSnake(direction);
-            //TODO calculate fitness for given weights using neural network
+            GameStatus gameStatus = individual.moveSnake(direction); //Outcome of last step
+            int currentDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
             if (gameStatus == GameStatus.GAME_OVER) {
-                gameOver = true;
-                fitness -= 5 ; //negative penalty for game over
+                System.err.println("Game over detected @ calcFitness");
+                fitness -= 5; // negative penalty for game over
+                individual.setFitness(fitness); // set fitness
+                return; // Game over
             } else if (gameStatus == GameStatus.APPLE) {
-                fitness += 1;
+                fitness += 10; // reward for eating an apple
+                initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition()); // Reset distance after eating an apple
             } else {
-                fitness += 0.1;
+                fitness += 0.1; // small reward for a valid move
             }
+            // Reward for getting closer to the apple
+            if (currentDistance < initialDistance) {
+                fitness += (initialDistance - currentDistance) * 0.5;
+            } else {
+                fitness -= (currentDistance - initialDistance) * 0.5;
+            }
+            initialDistance = currentDistance;
         }
         individual.setFitness(fitness);
-        return fitness;
+    }
+
+    private int getDistance(Position head, Position apple) {
+        return Math.abs(head.getX() - apple.getX()) + Math.abs(head.getY() - apple.getY());
     }
 
     //helpers

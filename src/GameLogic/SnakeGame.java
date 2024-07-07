@@ -54,4 +54,11 @@ public class SnakeGame {
     public void resetGameLevel () {
         elements.reset();
     }
+    public Position getHeadPosition() {
+        return elements.getHeadPosition();
+    }
+
+    public Position getApplePosition() {
+        return elements.getApplePosition();
+    }
 }
