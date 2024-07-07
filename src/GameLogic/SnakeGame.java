@@ -20,6 +20,7 @@ public class SnakeGame {
         elements = new Elements(width, height, random);
         this.width = width;
         this.height = height;
+        if (print) System.out.println("Game started");
     }
 
     public GameStatus step (Direction direction) {
@@ -30,8 +31,10 @@ public class SnakeGame {
             elements.moveAndGrow(direction);
             return GameStatus.APPLE;
         }
-        else elements.move(direction);
-        return GameStatus.NOTHING;
+        else {
+            elements.move(direction);
+            return GameStatus.NOTHING;
+        }
     }
 
     private int valueOfNextPosition (Position posSnake, Position posApple, Direction direction) {

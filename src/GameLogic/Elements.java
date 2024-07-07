@@ -142,13 +142,14 @@ public class Elements {
         }
         //Walls
         int w = width-snakePosition.getX();
-        environment[1][2] = w;
-        environment[1][6] = snakePosition.getX() + 1;
+        environment[2][1] = w;
+        environment[6][1] = snakePosition.getX() + 1;
         int h = height-snakePosition.getY();
-        environment[1][4] = h;
-        environment[1][0] = snakePosition.getY() + 1;
+        environment[4][1] = h;
+        environment[0][1] = snakePosition.getY() + 1;
         //TODO should the wall distance also be set on diagonals?
         //TODO Snake
+
         return environment;
     }
 }

@@ -4,10 +4,8 @@ import GameLogic.helpers.Direction;
 import GameLogic.helpers.GameStatus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
-import java.util.stream.Stream;
 
 public class GeneticAlgo {
 
@@ -15,10 +13,7 @@ public class GeneticAlgo {
     private final Random random = new Random();
     private final double fitnessThreshold = 0.1;
 
-    //für zufällige Initialisierung der Gewichte
-    private final double min = -100;
-    private final double max = 100;
-
+    //parameters
     private final int populationSize = 20;
     private final double mutationRate = 0.3;
     private final double avoidPercentage = 0.3; // %/100
@@ -26,10 +21,26 @@ public class GeneticAlgo {
     //single point or random crossover
 
     //methods
-    public void evolve(){
+    private boolean isTerminationCriterionMet(ArrayList<Individual> population) {
+        //Calculate and set fitness for every individual
+        for (Individual ind : population) {
+            calcFitness(ind);
+        }
+        //Sort individuals by fitness
+        population.sort(Comparator.comparingDouble(i -> i.getFitness() * (-1)));
+        System.out.println("Best individual: " + population.get(0));
+        if (population.get(0).getFitness() >= fitnessThreshold) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void evolve() {
+        int generation = 0;
         //Init population
         ArrayList<Individual> population = new ArrayList<>();
-        for (int i = 0; i<populationSize; i++) {
+        for (int i = 0; i < populationSize; i++) {
             population.add(initIndividual());
         }
         //Until termination criterion is met...
@@ -42,31 +53,43 @@ public class GeneticAlgo {
             population.sort(Comparator.comparingDouble(i -> i.getFitness()));
             //Make children
             ArrayList<Individual> children = new ArrayList<>();
-            for (int i = 0; i<populationSize; i++) {
+            for (int i = 0; i < populationSize; i++) {
                 int bound = (int) (populationSize - avoidPercentage * populationSize);
                 Individual parent1 = population.get(random.nextInt(bound));
                 Individual parent2 = population.get(random.nextInt(bound));
-                children.add(makeAChild(parent1, parent2, genomeSize));
+                children.add(makeAverageChild(parent1, parent2));
             }
+            System.out.println("Generation: " + generation++);
             population = children;
+
         }
         System.out.println("Best individual: " + population.get(0));
         System.out.println("Fitness: " + population.get(0).getFitness());
     }
 
     //Combine two parents for a child and mutate it
-    private Individual makeAChild(Individual parent1, Individual parent2, int size) {
-        //random crossover point
-        int crossoverPoint = random.nextInt(size);
+    private Individual makeAverageChild(Individual parent1, Individual parent2) {
         //combine two parents
-        double[] genomeParent1 = parent1.getGenome();
-        double[] genomeParent2 = parent2.getGenome();
-        double[] childGenome = new double[size];
-        System.arraycopy(genomeParent1, 0, childGenome, 0, crossoverPoint);
-        System.arraycopy(genomeParent2, crossoverPoint, childGenome, crossoverPoint, genomeParent2.length-crossoverPoint);
+        double[][][] genomeParent1 = parent1.getGenome();
+        double[][][] genomeParent2 = parent2.getGenome();
+        double[][][] childGenome = new double[nodeCount][directionsCount][elementCount];
+        //child is average of both parents
+        for (int i = 0; i < nodeCount; i++) {
+            for (int j = 0; j < directionsCount; j++) {
+                for (int k = 0; k < elementCount; k++) {
+                    childGenome[i][j][k] = (genomeParent1[i][j][k] + genomeParent2[i][j][k]) / 2;
+                }
+            }
+        }
+        //set bias
+        double averageBias = parent1.getBias() + parent2.getBias() / 2;
+        Individual child = new Individual(childGenome, averageBias, new SnakeGame(widthField, heightField, random, false));
         //mutate child
-        if (random.nextInt((int) (1/mutationRate)) == 0) childGenome[random.nextInt(size)] = random.nextDouble();
-        return new Individual(childGenome);
+        if (random.nextInt((int) (1 / mutationRate)) == 0) {
+            childGenome[random.nextInt(nodeCount)][random.nextInt(directionsCount)][random.nextInt(elementCount)] = random.nextDouble();
+            child.setGenome(childGenome);
+        }
+        return child;
     }
 
     private Individual initIndividual () {
@@ -78,13 +101,21 @@ public class GeneticAlgo {
         return new Individual(genome);
     }
 
-    private double calcFitness (Individual individual){
+    private double calcFitness(Individual individual) {
         double fitness = 0.0;
         boolean gameOver = false;
-        while (!gameOver) {
+        for (int i = 0; i < 100 && !gameOver; i++) {
             Direction direction = chooseDirection(individual);
             GameStatus gameStatus = individual.moveSnake(direction);
             //TODO calculate fitness for given weights using neural network
+            if (gameStatus == GameStatus.GAME_OVER) {
+                gameOver = true;
+                fitness -= 5 ; //negative penalty for game over
+            } else if (gameStatus == GameStatus.APPLE) {
+                fitness += 1;
+            } else {
+                fitness += 0.1;
+            }
         }
         individual.setFitness(fitness);
         return fitness;

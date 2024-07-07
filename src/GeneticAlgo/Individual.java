@@ -8,21 +8,24 @@ import java.util.Arrays;
 
 public class Individual {
 
-    private double[] genome;
+    private double[][][] genome;
 
     private double fitness;
+    private double bias;
 
     private ArrayList<Direction> directions;
 
     private SnakeGame snakeGame;
 
-    public Individual (double[] genome) {
+    public Individual (double[][][] genome,double bias, SnakeGame snakeGame) {
         this.genome = genome;
         fitness = Double.MAX_VALUE;
         directions = new ArrayList<>();
+        this.snakeGame = snakeGame;
+        this.bias = bias;
     }
 
-    public double[] getGenome() {
+    public double[][][] getGenome() {
         return genome;
     }
 
@@ -32,6 +35,18 @@ public class Individual {
 
     public void setFitness(double fitness) {
         this.fitness = fitness;
+    }
+
+    public double getBias() {
+        return bias;
+    }
+
+    public void setBias(double bias) {
+        this.bias = bias;
+    }
+
+    public void setGenome(double[][][] genome) {
+        this.genome = genome;
     }
 
     public void addDirection(Direction direction) {

@@ -14,6 +14,7 @@ public class Gridworld {
         this.width = width;
         this.height = height;
         field = new Marker[width][height];
+        this.print = print;
     }
 
     public Gridworld (Gridworld gridworld) {
@@ -30,6 +31,7 @@ public class Gridworld {
     }
 
     public void updateField (Position position, Marker marker) {
+
         field [position.getX()][position.getY()] = marker;
     }
 
