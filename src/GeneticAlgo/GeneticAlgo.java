@@ -11,8 +11,6 @@ import java.util.Random;
 
 public class GeneticAlgo {
 
-    //genome Array sizes (3-dimensional)
-
     private final int nodeCount = 4;
     private final int directionsCount = 8;
     private final int elementCount = 3;
@@ -21,15 +19,20 @@ public class GeneticAlgo {
 
     //parameters
     private final int populationSize = 20;
-    private final double mutationRate = 0.3;
-    private final double avoidPercentage = 0.3; // %/100
+    private final double initialMutationRate = 0.3;
+    private final double avoidPercentage = 0.3;
+    private final double largeMutationRate = 0.1;
+    private final double smallMutationScale = 0.2;
+
     //elitism
     //single point or random crossover
 
     private final int widthField = 5;
     private final int heightField = 5;
+    private int generation = 0;
+    private int maxGenerations = 10000; // Annahme, kann angepasst werden
+    private int maxFitness = 100; // Annahme, kann angepasst werden
 
-    //methods
     private boolean isTerminationCriterionMet(ArrayList<Individual> population) {
         //Calculate and set fitness for every individual
         for (Individual ind : population) {
@@ -38,11 +41,7 @@ public class GeneticAlgo {
         //Sort individuals by fitness
         population.sort(Comparator.comparingDouble(i -> i.getFitness() * (-1)));
         System.out.println("Best individual: " + population.get(0));
-        if (population.get(0).getFitness() >= fitnessThreshold) {
-            return true;
-        } else {
-            return false;
-        }
+        return population.get(0).getFitness() >= fitnessThreshold;
     }
 
     public void evolve() {
@@ -69,9 +68,12 @@ public class GeneticAlgo {
             }
             System.out.println("Generation: " + generation++);
             population = children;
+            this.generation = generation; // Update generation count
         }
-        // Print best individual
-        Individual bestIndividual = population.get(0);
+        printBestIndividual(population.get(0));
+    }
+
+    private void printBestIndividual(Individual bestIndividual) {
         System.out.println("Best individual: " + bestIndividual);
         System.out.println("Fitness: " + bestIndividual.getFitness());
 
@@ -120,31 +122,25 @@ public class GeneticAlgo {
         for (int i = 0; i < nodeCount; i++) {
             for (int j = 0; j < directionsCount; j++) {
                 for (int k = 0; k < elementCount; k++) {
-                    if (counter < crossoverPoint) childGenome[i][j][k] = genomeParent1[i][j][k];
-                    else childGenome[i][j][k] = genomeParent2[i][j][k];
+                    if (counter < crossoverPoint) {
+                        childGenome[i][j][k] = genomeParent1[i][j][k];
+                    } else {
+                        childGenome[i][j][k] = genomeParent2[i][j][k];
+                    }
                     counter++;
                 }
             }
         }
         //set bias
         double averageBias = (parent1.getBias() + parent2.getBias()) / 2;
-        Individual child = new Individual(childGenome, averageBias, new SnakeGame(widthField, heightField, random, false));
-        return child;
+        return new Individual(childGenome, averageBias, new SnakeGame(widthField, heightField, random, false));
     }
 
     private void mutateIndividual(Individual child) {
         double[][][] genome = child.getGenome();
-        double baseMutationRate = mutationRate;
-        double largeMutationRate = 0.1; // 10 % Wahrscheinlichkeit für große Mutationen
-        double smallMutationScale = 0.2; // Kleine Mutationen im Bereich [-0.1, 0.1]
-
-        // Anpassung der Mutationsrate basierend auf der Fitness
-        double fitnessFactor = 1.0 - (child.getFitness() / getMaxFitness()); // angenommen, getMaxFitness() gibt die maximale mögliche Fitness zurück
-        double adaptiveMutationRate = baseMutationRate * fitnessFactor;
+        double fitnessFactor = 1.0 - (child.getFitness() / getMaxFitness());
+        double adaptiveMutationRate = initialMutationRate * (1.0 - (double) generation / maxGenerations);
         double adaptiveLargeMutationRate = largeMutationRate * fitnessFactor;
-
-        //TODO Anpassung des Mutationsumfangs basierend auf der aktuellen Generation
-
 
         for (int i = 0; i < nodeCount; i++) {
             for (int j = 0; j < directionsCount; j++) {
@@ -165,7 +161,7 @@ public class GeneticAlgo {
     }
 
     private double getMaxFitness() {
-        return 100.0; // Annahme
+        return maxFitness;
     }
 
     private Individual initIndividual() {
@@ -191,7 +187,7 @@ public class GeneticAlgo {
             }
 
             Direction direction = chooseDirection(individual);
-            GameStatus gameStatus = individual.moveSnake(direction); // Outcome of last step
+            GameStatus gameStatus = individual.moveSnake(direction);
             int currentDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
 
             if (gameStatus == GameStatus.GAME_OVER) {
@@ -199,7 +195,7 @@ public class GeneticAlgo {
                 break; // Exit the loop if the game is over
             } else if (gameStatus == GameStatus.APPLE) {
                 fitness += 10; // Reward for eating an apple
-                initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition()); // Reset distance after eating an apple
+                initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
             } else {
                 fitness += 0.1; // Small reward for a valid move
             }
