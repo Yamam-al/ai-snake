@@ -61,7 +61,11 @@ public class GeneticAlgo {
                 int bound = (int) (populationSize - avoidPercentage * populationSize);
                 Individual parent1 = population.get(random.nextInt(bound));
                 Individual parent2 = population.get(random.nextInt(bound));
-                children.add(makeAverageChild(parent1, parent2));
+                Individual child = makeCombinationChild(parent1, parent2);
+
+                //mutate child
+                mutateIndividual(child);
+                children.add(child);
             }
             System.out.println("Generation: " + generation++);
             population = children;
@@ -99,11 +103,7 @@ public class GeneticAlgo {
         //set bias
         double averageBias = (parent1.getBias() + parent2.getBias()) / 2;
         Individual child = new Individual(childGenome, averageBias, new SnakeGame(widthField, heightField, random, false));
-        //mutate child
-        if (random.nextInt((int) (1 / mutationRate)) == 0) {
-            childGenome[random.nextInt(nodeCount)][random.nextInt(directionsCount)][random.nextInt(elementCount)] = random.nextDouble();
-            child.setGenome(childGenome);
-        }
+
         return child;
     }
 
@@ -129,12 +129,43 @@ public class GeneticAlgo {
         //set bias
         double averageBias = (parent1.getBias() + parent2.getBias()) / 2;
         Individual child = new Individual(childGenome, averageBias, new SnakeGame(widthField, heightField, random, false));
-        //mutate child
-        if (random.nextInt((int) (1 / mutationRate)) == 0) {
-            childGenome[random.nextInt(nodeCount)][random.nextInt(directionsCount)][random.nextInt(elementCount)] = random.nextDouble();
-            child.setGenome(childGenome);
-        }
         return child;
+    }
+
+    private void mutateIndividual(Individual child) {
+        double[][][] genome = child.getGenome();
+        double baseMutationRate = mutationRate;
+        double largeMutationRate = 0.1; // 10 % Wahrscheinlichkeit für große Mutationen
+        double smallMutationScale = 0.2; // Kleine Mutationen im Bereich [-0.1, 0.1]
+
+        // Anpassung der Mutationsrate basierend auf der Fitness
+        double fitnessFactor = 1.0 - (child.getFitness() / getMaxFitness()); // angenommen, getMaxFitness() gibt die maximale mögliche Fitness zurück
+        double adaptiveMutationRate = baseMutationRate * fitnessFactor;
+        double adaptiveLargeMutationRate = largeMutationRate * fitnessFactor;
+
+        //TODO Anpassung des Mutationsumfangs basierend auf der aktuellen Generation
+
+
+        for (int i = 0; i < nodeCount; i++) {
+            for (int j = 0; j < directionsCount; j++) {
+                for (int k = 0; k < elementCount; k++) {
+                    // Mutation
+                    if (random.nextDouble() < adaptiveMutationRate) {
+                        // big mutation (10%)
+                        if (random.nextDouble() < adaptiveLargeMutationRate) {
+                            genome[i][j][k] = random.nextDouble();
+                        } else { // small mutation (90%)
+                            genome[i][j][k] += (random.nextDouble() - 0.5) * smallMutationScale; // Kleine Mutation
+                        }
+                    }
+                }
+            }
+        }
+        child.setGenome(genome);
+    }
+
+    private double getMaxFitness() {
+        return 100.0; // Annahme
     }
 
     private Individual initIndividual() {
@@ -143,7 +174,7 @@ public class GeneticAlgo {
         for (int i = 0; i < nodeCount; i++) {
             for (int j = 0; j < directionsCount; j++) {
                 for (int k = 0; k < elementCount; k++) {
-                    genome[i][j][k] = random.nextDouble(); //random initial weights
+                    genome[i][j][k] = (random.nextDouble() - 0.5) * 2; // Werte zwischen -1 und 1
                 }
             }
         }

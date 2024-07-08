@@ -4,7 +4,6 @@ import GameLogic.helpers.Direction;
 import GameLogic.helpers.Marker;
 import GameLogic.helpers.Position;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -38,10 +37,21 @@ public class Elements {
     }
 
     public void spawnApple() {
-        //spawn Apple with random position
-        int xA = random.nextInt(width);
-        int yA = random.nextInt(height);
-        Position position = new Position(xA, yA);
+        Position position = null;
+        //Check that Apple does not get spawned on top of any snake part
+        boolean isOnSnake = true;
+        while (isOnSnake) {
+            isOnSnake = false;
+            //spawn Apple with random position
+            int xA = random.nextInt(width);
+            int yA = random.nextInt(height);
+            position = new Position(xA, yA);
+            Position finalPosition = position;
+            if (snake.stream().anyMatch(s -> s.getPosition().equals(finalPosition))) {
+                isOnSnake = true;
+            }
+        }
+        //update gameLogic.Gridworld
         field.updateField(position, Marker.APPLE);
         apple = position;
     }
@@ -51,11 +61,6 @@ public class Elements {
         int xS = random.nextInt(width);
         int yS = random.nextInt(height);
         Position position = new Position(xS, yS);
-        //Check that snake does not get spawned on top of apple
-        while(position.equals(apple)) {
-            xS = random.nextInt(width);
-            yS = random.nextInt(height);
-        }
         int direction = random.nextInt(4);
         //update gameLogic.Gridworld
         field.updateField(position, Marker.SNAKE_HEAD);
@@ -107,10 +112,10 @@ public class Elements {
         checkPointApple = apple.copy();
     }
 
-    private ArrayList<SnakeNode> copySnake (ArrayList<SnakeNode> original) {
+    private ArrayList<SnakeNode> copySnake(ArrayList<SnakeNode> original) {
         ArrayList<SnakeNode> copy = new ArrayList<>();
-        for(SnakeNode node : original) {
-            copy.add(new SnakeNode(node.getPosition().copy(),node.getDirection()));
+        for (SnakeNode node : original) {
+            copy.add(new SnakeNode(node.getPosition().copy(), node.getDirection()));
         }
         return copy;
     }
