@@ -14,11 +14,11 @@ public class Position {
     }
 
     public void move (Direction direction) {
-        switch (direction) { //(0,0) is in the top left corner
-            case UP -> y--;
-            case DOWN -> y++;
-            case LEFT -> x--;
-            case RIGHT -> x++;
+        switch (direction) {
+            case UP -> this.y--;
+            case DOWN -> this.y++;
+            case LEFT -> this.x--;
+            case RIGHT -> this.x++;
         }
     }
 
@@ -30,17 +30,11 @@ public class Position {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
 
     public int getY() {
         return y;
     }
 
-    public void setY(int y) {
-        this.y = y;
-    }
 
     @Override
     public boolean equals(Object o) {

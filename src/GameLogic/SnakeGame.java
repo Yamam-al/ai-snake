@@ -90,4 +90,8 @@ public class SnakeGame {
         elements.setPrint(print);
 
     }
+
+    public int getSnackSize() {
+        return elements.getSnakePositions().size();
+    }
 }

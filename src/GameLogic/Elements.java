@@ -68,33 +68,67 @@ public class Elements {
     }
 
     public void move(Direction direction) {
-        snake.get(0).setDirection(direction);
-        field.updateField(snake.get(0).getPosition(), null); // Erase head
-        snake.get(0).getPosition().move(direction);
-        field.updateField(snake.get(0).getPosition(), Marker.SNAKE_HEAD);
+        // Move head
+        Position headPosition = snake.get(0).getPosition();
+        Position newHeadPosition = headPosition.copy();
+        newHeadPosition.move(direction);
 
-        SnakeNode currentNode = snake.get(0);
-        for (int i = 1; i < snake.size(); i++) {
-            Direction curDirec = currentNode.getDirection();
-            currentNode = snake.get(i); // get next node
-            if (i == snake.size() - 1) {
-                field.updateField(currentNode.getPosition(), null); // Erase last snake part
-            }
-            currentNode.getPosition().move(currentNode.getDirection());
-            field.updateField(currentNode.getPosition(), Marker.SNAKE_NODE);
-            currentNode.setDirection(curDirec);
+        // Check if the new head position is out of bounds
+        if (newHeadPosition.getX() < 0 || newHeadPosition.getX() >= width ||
+                newHeadPosition.getY() < 0 || newHeadPosition.getY() >= height) {
+            throw new IllegalStateException("Snake head position out of bounds: " + newHeadPosition);
         }
+
+        // Clear current head position
+        field.updateField(headPosition, null);
+
+        // Move head to new position
+        snake.get(0).setPosition(newHeadPosition);
+        snake.get(0).setDirection(direction);
+        field.updateField(newHeadPosition, Marker.SNAKE_HEAD);
+
+        // Move the rest of the body
+        Position prevPosition = headPosition.copy();
+        for (int i = 1; i < snake.size(); i++) {
+            SnakeNode currentNode = snake.get(i);
+            Position currentPosition = currentNode.getPosition().copy();
+            Direction prevDirection = currentNode.getDirection();
+
+            // Update current node position to the previous node's position
+            currentNode.setPosition(prevPosition);
+            currentNode.setDirection(prevDirection);
+
+            // Clear previous position of the current node
+            field.updateField(currentPosition, null);
+
+            // Mark the new position of the current node
+            field.updateField(prevPosition, Marker.SNAKE_NODE);
+
+            // Save the current position for the next iteration
+            prevPosition = currentPosition;
+        }
+
         field.printField();
     }
 
-
     public void moveAndGrow(Direction direction) {
-        Position lastHeadPos = snake.get(0).getPosition().copy();
+        Position headPosition = snake.get(0).getPosition();
+        Position newHeadPosition = headPosition.copy();
+        newHeadPosition.move(direction);
+
+        // Check if the new position is out of bounds
+        if (newHeadPosition.getX() < 0 || newHeadPosition.getX() >= width ||
+                newHeadPosition.getY() < 0 || newHeadPosition.getY() >= height) {
+            System.err.println("Position out of bounds: " + newHeadPosition);
+            return;
+        }
+
+        Position lastHeadPos = headPosition.copy();
         field.updateField(lastHeadPos, Marker.SNAKE_NODE);
-        snake.get(0).getPosition().move(direction);
-        field.updateField(snake.get(0).getPosition(), Marker.SNAKE_HEAD);
-        snake.add(1, (new SnakeNode(lastHeadPos, direction))); //add new node just behind the head
-        //setCheckPoint();
+        snake.get(0).setPosition(newHeadPosition);
+        field.updateField(newHeadPosition, Marker.SNAKE_HEAD);
+        snake.add(1, new SnakeNode(lastHeadPos, direction)); // Add new node just behind the head
+
         field.printField();
     }
 

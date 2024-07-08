@@ -15,14 +15,16 @@ public class GeneticAlgo {
     private final int directionsCount = 8;
     private final int elementCount = 3;
     private final Random random = new Random();
-    private final double fitnessThreshold = 9;
 
     //parameters
-    private final int populationSize = 20;
+
+    private final double fitnessThreshold = 1500;
+    private final int populationSize = 100;
     private final double initialMutationRate = 0.3;
-    private final double avoidPercentage = 0.3;
-    private final double largeMutationRate = 0.1;
+    private final double avoidPercentage = 0.6;
+    private final double largeMutationRate = 0.2;
     private final double smallMutationScale = 0.2;
+    private final int maxSteps = 500; // for each individual in a generation (can be adjusted)
 
     //elitism
     //single point or random crossover
@@ -31,7 +33,7 @@ public class GeneticAlgo {
     private final int heightField = 5;
     private int generation = 0;
     private int maxGenerations = 10000; // Annahme, kann angepasst werden
-    private int maxFitness = 100; // Annahme, kann angepasst werden
+    private int maxFitness = 10000; // Annahme, kann angepasst werden
 
     public void evolve() {
         int generation = 0;
@@ -89,9 +91,11 @@ public class GeneticAlgo {
     private void calcFitness(Individual individual) {
         double fitness = 0.0;
         int initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
+        int applesEaten = 0;
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < maxSteps; i++) {
             if (individual.getSnakeGame().isGameOver()) {
+                fitness -= 50; // Negative penalty for game over
                 break; // Stop the loop if the game is over
             }
 
@@ -100,27 +104,33 @@ public class GeneticAlgo {
             int currentDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
 
             if (gameStatus == GameStatus.GAME_OVER) {
-                fitness -= 5; // Negative penalty for game over
+                fitness -= 500 - 100 * applesEaten; // Additional penalty for game over unless the snake has eaten enough apples
                 break; // Exit the loop if the game is over
             } else if (gameStatus == GameStatus.APPLE) {
-                fitness += 10; // Reward for eating an apple
+                applesEaten++;
+                fitness += 100 * applesEaten; // High reward for eating an apple
                 initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
             } else {
-                fitness += 0.1; // Small reward for a valid move
+                fitness -= 0.1; // Small penalty for each step taken
             }
 
             // Reward for getting closer to the apple
             if (currentDistance < initialDistance) {
-                fitness += (initialDistance - currentDistance) * 0.5;
+                fitness += 1 * currentDistance; // Small reward for getting closer to the apple
             } else {
-                fitness -= (currentDistance - initialDistance) * 0.5;
+                fitness -= 5 * currentDistance; // Small penalty for getting further from the apple
             }
 
             initialDistance = currentDistance;
         }
 
+        // Additional bonus for each segment of the snake
+        fitness += individual.getSnakeSize() * 10;
+
         individual.setFitness(fitness);
     }
+
+
 
     private Direction chooseDirection(Individual individual) {
         int[][] environment = individual.getEnvironment();

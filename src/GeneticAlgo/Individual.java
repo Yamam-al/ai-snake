@@ -97,4 +97,8 @@ public class Individual {
     public SnakeGame getSnakeGame() {
         return snakeGame;
     }
+
+    public int getSnakeSize() {
+        return snakeGame.getSnackSize();
+    }
 }

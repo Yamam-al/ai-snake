@@ -28,4 +28,5 @@ public class SnakeNode {
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
+
 }
