@@ -72,8 +72,6 @@ public class Individual {
 
     public GameStatus moveSnake(Direction direction) {
         GameStatus status = snakeGame.move(direction);
-        if (status == GameStatus.GAME_OVER) {
-        }
         saveGameState();
         return status;
     }

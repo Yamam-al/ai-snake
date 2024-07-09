@@ -14,7 +14,7 @@ public class GeneticAlgo {
     private final int nodeCount = 4;
     private final int directionsCount = 8;
     private final int elementCount = 3;
-    private final Random random = new Random(2289);
+    private final Random random = new Random();
 
     //parameters
 
