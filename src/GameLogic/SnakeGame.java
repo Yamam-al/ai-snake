@@ -92,6 +92,6 @@ public class SnakeGame {
     }
 
     public int getSnackSize() {
-        return elements.getSnakePositions().size();
+        return elements.getSnakeSize();
     }
 }

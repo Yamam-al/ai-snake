@@ -14,6 +14,7 @@ public class Individual {
     private ArrayList<Direction> directions;
     private SnakeGame snakeGame;
     private ArrayList<int[][]> gameStates;
+    private int snakeSize = 0;
 
     // Neue Mutationsparameter
     private double initialMutationRate;
@@ -73,6 +74,7 @@ public class Individual {
     public GameStatus moveSnake(Direction direction) {
         GameStatus status = snakeGame.move(direction);
         saveGameState();
+        snakeSize = snakeGame.getSnackSize();
         return status;
     }
 

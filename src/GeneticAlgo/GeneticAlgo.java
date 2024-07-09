@@ -5,6 +5,7 @@ import GameLogic.helpers.Direction;
 import GameLogic.helpers.GameStatus;
 import GameLogic.helpers.Position;
 
+import javax.xml.transform.Source;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -21,11 +22,11 @@ public class GeneticAlgo {
     private final int nodeCount = 4;
     private final int directionsCount = 8;
     private final int elementCount = 3;
-    private final Random random = new Random(2289);
+    private final Random random = new Random();
 
     //parameters
 
-    private final double fitnessThreshold = 50000;
+    private final double fitnessThreshold = 5000;
     private final int populationSize = 500;
 
     //Mutation
@@ -106,7 +107,10 @@ public class GeneticAlgo {
             // Write statistics to CSV
             writeStatsToCSV(generation, minFitness, avgFitness, maxFitness);
         }
-        //printBestIndividual(population.get(0));
+        System.out.println(population.get(0).getSnakeSize());
+        printBestIndividual(population.get(0));
+        System.out.println(population.get(0).getSnakeSize());
+
     }
 
 
@@ -122,7 +126,7 @@ public class GeneticAlgo {
         }
 
         // Initialisieren Sie die Mutations-parameter mit den gegebenen Werten
-        return new Individual(genome, random.nextDouble(), new SnakeGame(widthField, heightField, random, true),
+        return new Individual(genome, random.nextDouble(), new SnakeGame(widthField, heightField, random, false),
                 initialMutationRate, largeMutationRate, smallMutationStepSize);
     }
 
