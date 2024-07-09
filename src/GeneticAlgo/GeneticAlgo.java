@@ -5,7 +5,6 @@ import GameLogic.helpers.Direction;
 import GameLogic.helpers.GameStatus;
 import GameLogic.helpers.Position;
 
-import javax.xml.transform.Source;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -26,16 +25,16 @@ public class GeneticAlgo {
 
     //parameters
 
-    private final double fitnessThreshold = 5000;
-    private final int populationSize = 500;
+    private final double fitnessThreshold = 20000;
+    private final int populationSize = 600;
 
     //Mutation
     private final boolean selfAdaptive = true;
     private final double initialMutationRate = 0.3;
     private final double avoidPercentage = 0.6;
-    private final double largeMutationRate = 0.2;
-    private final double smallMutationStepSize = 0.2; //stepSize for small mutation
-    private final int maxSteps = 500; // for each individual in a generation (can be adjusted)
+    private final double initialLargeMutationRate = 0.1;
+    private final double initialSmallMutationStepSize = 0.2; //stepSize for small mutation
+    private final int maxSteps = 120; // for each individual in a generation (can be adjusted)
     private final int eliteCount = populationSize * 5 / 100; // 5% of the population is elite
 
     //elitism
@@ -124,7 +123,7 @@ public class GeneticAlgo {
 
         // Initialisieren Sie die Mutations-parameter mit den gegebenen Werten
         return new Individual(genome, random.nextDouble(), new SnakeGame(widthField, heightField, random, false),
-                initialMutationRate, largeMutationRate, smallMutationStepSize);
+                initialMutationRate, initialLargeMutationRate, initialSmallMutationStepSize);
     }
 
     private boolean isTerminationCriterionMet(ArrayList<Individual> population) {
@@ -190,8 +189,13 @@ public class GeneticAlgo {
     }
 
     private void printBestIndividual(Individual bestIndividual) {
+    System.out.println(bestIndividual.getGameField());
+        System.out.println("Best individual stats:");
         System.out.println("Directions: " + bestIndividual.getDirections());
+        System.out.println("Fitness: " + bestIndividual.getFitness());
         System.out.println("Steps moved: " + bestIndividual.getDirections().size());
+        System.out.println("Snake length: " + bestIndividual.getSnakeSize());
+        System.out.println("Generation: " + generation);
     }
 
     //Combine two parents for a child and mutate it

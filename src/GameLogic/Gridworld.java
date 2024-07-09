@@ -69,7 +69,7 @@ public class Gridworld {
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
                 if (field[i][j] == null) {
-                    stringBuilder.append("|    ");
+                    stringBuilder.append("| ").append("⬛").append(" ");
                     continue;
                 }
                 stringBuilder.append(String.format("| %s ", field[i][j]));
