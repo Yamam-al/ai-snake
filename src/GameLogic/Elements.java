@@ -160,6 +160,10 @@ public class Elements {
         return snake.stream().map(s -> s.getPosition().copy()).collect(Collectors.toList());
     }
 
+    public int getSnakeSize () {
+        return snake.size();
+    }
+
     public int[][] getEnvironment() {
         int[][] environment = new int[8][3]; //Apple, Wall, Snake
         Position snakePosition = snake.get(0).getPosition().copy();

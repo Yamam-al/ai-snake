@@ -5,6 +5,7 @@ import GameLogic.helpers.Direction;
 import GameLogic.helpers.GameStatus;
 import GameLogic.helpers.Position;
 
+import javax.xml.transform.Source;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,11 +21,11 @@ public class GeneticAlgo {
     private final int nodeCount = 4;
     private final int directionsCount = 8;
     private final int elementCount = 3;
-    private final Random random = new Random(2289);
+    private final Random random = new Random();
 
     //parameters
 
-    private final double fitnessThreshold = 50000;
+    private final double fitnessThreshold = 5000;
     private final int populationSize = 500;
 
     //Mutation
@@ -97,7 +98,10 @@ public class GeneticAlgo {
             System.out.println("Generation: " + generation++);
             population = children;
         }
+        System.out.println(population.get(0).getSnakeSize());
         printBestIndividual(population.get(0));
+        System.out.println(population.get(0).getSnakeSize());
+
     }
 
 
@@ -125,6 +129,9 @@ public class GeneticAlgo {
         //Sort individuals by fitness
         population.sort(Comparator.comparingDouble(i -> i.getFitness() * (-1)));
         System.out.println("Best individual: " + population.get(0));
+        System.out.println("Snake size: " + population.get(0).getSnakeSize());
+        System.out.println("Direction size: " + population.get(0).getDirections().size());
+        System.out.println(population.get(0).getDirections());
         return population.get(0).getFitness() >= fitnessThreshold;
     }
 
@@ -147,7 +154,7 @@ public class GeneticAlgo {
             if (gameStatus == GameStatus.GAME_OVER) {
                 fitness -= 500 - 100 * applesEaten; // Additional penalty for game over unless the snake has eaten enough apples
                 break; // Exit the loop if the game is over
-            } else if (gameStatus == GameStatus.APPLE) {
+            } if (gameStatus == GameStatus.APPLE) {
                 applesEaten++;
                 fitness += 100*applesEaten; // High reward for eating an apple
                 initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
@@ -165,9 +172,7 @@ public class GeneticAlgo {
         // Reward for surviving longer
         fitness += stepsSurvived * 0.1;
 
-        // Final adjustment for apples eaten and distance moved efficiently
         fitness += applesEaten * 50; // Additional reward for apples eaten
-        fitness += 0.01 * (maxSteps - stepsSurvived); // Small reward for steps survived without game over
         individual.setFitness(fitness);
     }
 
