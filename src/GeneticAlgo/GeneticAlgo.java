@@ -14,7 +14,7 @@ public class GeneticAlgo {
     private final int nodeCount = 4;
     private final int directionsCount = 8;
     private final int elementCount = 3;
-    private final Random random = new Random();
+    private final Random random = new Random(2289);
 
     //parameters
 
@@ -22,7 +22,7 @@ public class GeneticAlgo {
     private final int populationSize = 100;
 
     //Mutation
-    private final boolean selfAdaptive = true;
+    private final boolean selfAdaptive = false;
     private final double initialMutationRate = 0.3;
     private final double avoidPercentage = 0.6;
     private final double largeMutationRate = 0.2;
@@ -107,38 +107,30 @@ public class GeneticAlgo {
 
         for (int i = 0; i < maxSteps; i++) {
             if (individual.getSnakeGame().isGameOver()) {
-                fitness -= 50; // Negative penalty for game over
-                break; // Stop the loop if the game is over
+                fitness -= 500 - 100 * applesEaten; // Additional penalty for game over unless the snake has eaten enough apples
+                break; // Exit the loop if the game is over
             }
-
             Direction direction = chooseDirection(individual);
             GameStatus gameStatus = individual.moveSnake(direction);
-            int currentDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
+            int currentDistanceToApple = getDistance(individual.getHeadPosition(), individual.getApplePosition());
 
             if (gameStatus == GameStatus.GAME_OVER) {
                 fitness -= 500 - 100 * applesEaten; // Additional penalty for game over unless the snake has eaten enough apples
                 break; // Exit the loop if the game is over
             } else if (gameStatus == GameStatus.APPLE) {
                 applesEaten++;
-                fitness += 100 * applesEaten; // High reward for eating an apple
+                fitness += 100*applesEaten; // High reward for eating an apple
                 initialDistance = getDistance(individual.getHeadPosition(), individual.getApplePosition());
-            } else {
-                fitness -= 0.1; // Small penalty for each step taken
+            } else { //Step
+                // Reward for getting closer to the apple
+                if (currentDistanceToApple < initialDistance) {
+                    fitness += (widthField+heightField)/2.0-currentDistanceToApple; // Small reward for getting closer to the apple
+                } else {
+                    fitness -= 5 * currentDistanceToApple; // Small penalty for getting further from the apple
+                }
             }
-
-            // Reward for getting closer to the apple
-            if (currentDistance < initialDistance) {
-                fitness += 1 * currentDistance; // Small reward for getting closer to the apple
-            } else {
-                fitness -= 5 * currentDistance; // Small penalty for getting further from the apple
-            }
-
-            initialDistance = currentDistance;
+            initialDistance = currentDistanceToApple;
         }
-
-        // Additional bonus for each segment of the snake
-        fitness += individual.getSnakeSize() * 10;
-
         individual.setFitness(fitness);
     }
 
