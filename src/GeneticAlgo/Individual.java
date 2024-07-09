@@ -15,14 +15,28 @@ public class Individual {
     private SnakeGame snakeGame;
     private ArrayList<int[][]> gameStates;
 
-    public Individual(double[][][] genome, double bias, SnakeGame snakeGame) {
+    // Neue Mutationsparameter
+    private double initialMutationRate;
+    private double largeMutationRate;
+    private double smallMutationStepSize;
+    private boolean selfAdaptive;  // Boolean für selbstadaptives Verhalten
+
+
+    // Constructor
+    public Individual(double[][][] genome, double bias, SnakeGame snakeGame,
+                      double initialMutationRate, double largeMutationRate,
+                      double smallMutationStepSize) {
         this.genome = genome;
         this.fitness = Double.MIN_VALUE;
         this.directions = new ArrayList<>();
         this.snakeGame = snakeGame;
         this.bias = bias;
         this.gameStates = new ArrayList<>();
+        this.initialMutationRate = initialMutationRate;
+        this.largeMutationRate = largeMutationRate;
+        this.smallMutationStepSize = smallMutationStepSize;
     }
+
 
     public double[][][] getGenome() {
         return genome;
@@ -100,5 +114,30 @@ public class Individual {
 
     public int getSnakeSize() {
         return snakeGame.getSnackSize();
+    }
+
+    // Getter und Setter für die neuen Mutationsparameter
+    public double getInitialMutationRate() {
+        return initialMutationRate;
+    }
+
+    public void setInitialMutationRate(double initialMutationRate) {
+        this.initialMutationRate = initialMutationRate;
+    }
+
+    public double getLargeMutationRate() {
+        return largeMutationRate;
+    }
+
+    public void setLargeMutationRate(double largeMutationRate) {
+        this.largeMutationRate = largeMutationRate;
+    }
+
+    public double getSmallMutationStepSize() {
+        return smallMutationStepSize;
+    }
+
+    public void setSmallMutationStepSize(double smallMutationStepSize) {
+        this.smallMutationStepSize = smallMutationStepSize;
     }
 }
