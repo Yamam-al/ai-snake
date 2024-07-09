@@ -6,6 +6,7 @@ import GameLogic.helpers.GameStatus;
 import GameLogic.helpers.Position;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Random;
@@ -43,8 +44,8 @@ public class GeneticAlgo {
     private final int heightField = 8;
     private int generation = 0;
     private final int maxGenerations = 100000; // Annahme, kann angepasst werden
-    private final boolean printCSV = false;
-    private final String csvFileName = "fitness_stats_" + LocalDate.now() +"_SelfAdapting_"+selfAdaptive+".csv";
+    private final boolean printCSV = true;
+    private final String csvFileName = "fitness_stats_" + LocalDate.now() + LocalTime.now().getHour() + "-" +LocalTime.now().getMinute() + "-" + LocalTime.now().getSecond() +"_SelfAdapting_"+selfAdaptive+".csv";
 
     public void evolve() {
         // Init population
@@ -97,7 +98,15 @@ public class GeneticAlgo {
             System.out.println("Generation: " + generation++);
             population = children;
         }
-        printBestIndividual(population.get(0));
+        if (printCSV){
+            // Collect statistics
+            double minFitness = calculateMinFitness(population);
+            double avgFitness = calculateAvgFitness(population);
+            double maxFitness = calculateMaxFitness(population);
+            // Write statistics to CSV
+            writeStatsToCSV(generation, minFitness, avgFitness, maxFitness);
+        }
+        //printBestIndividual(population.get(0));
     }
 
 
@@ -113,7 +122,7 @@ public class GeneticAlgo {
         }
 
         // Initialisieren Sie die Mutations-parameter mit den gegebenen Werten
-        return new Individual(genome, random.nextDouble(), new SnakeGame(widthField, heightField, random, false),
+        return new Individual(genome, random.nextDouble(), new SnakeGame(widthField, heightField, random, true),
                 initialMutationRate, largeMutationRate, smallMutationStepSize);
     }
 
