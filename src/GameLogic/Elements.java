@@ -101,11 +101,11 @@ public class Elements {
             // Save the current position for the next iteration
             prevPosition = currentPosition;
         }
-
         field.printField();
+        return field.getField();
     }
 
-    public void moveAndGrow(Direction direction) {
+    public String moveAndGrow(Direction direction) {
         Position headPosition = snake.get(0).getPosition();
         Position newHeadPosition = headPosition.copy();
         newHeadPosition.move(direction);
@@ -114,7 +114,7 @@ public class Elements {
         if (newHeadPosition.getX() < 0 || newHeadPosition.getX() >= width ||
                 newHeadPosition.getY() < 0 || newHeadPosition.getY() >= height) {
             System.err.println("Position out of bounds: " + newHeadPosition);
-            return;
+            return field.getField();
         }
 
         Position lastHeadPos = headPosition.copy();
@@ -124,6 +124,7 @@ public class Elements {
         snake.add(1, new SnakeNode(lastHeadPos, direction)); // Add new node just behind the head
 
         field.printField();
+        return field.getField();
     }
 
     public void reset() {

@@ -107,10 +107,7 @@ public class GeneticAlgo {
             // Write statistics to CSV
             writeStatsToCSV(generation, minFitness, avgFitness, maxFitness);
         }
-        System.out.println(population.get(0).getSnakeSize());
         printBestIndividual(population.get(0));
-        System.out.println(population.get(0).getSnakeSize());
-
     }
 
 
@@ -208,8 +205,6 @@ public class GeneticAlgo {
         }
         System.out.println("Directions: " + bestIndividual.getDirections());
         System.out.println("Steps moved: " + bestIndividual.getDirections().size());
-        System.out.println("Game Over: " + game.isGameOver());
-
     }
 
     //Combine two parents for a child and mutate it

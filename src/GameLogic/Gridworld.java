@@ -57,8 +57,25 @@ public class Gridworld {
             }
             stringBuilder.append("\u001B[0m" + "\n" + symbolMulti('_', width * 5 + 1) + "\n");
             System.out.println(stringBuilder);
-
         }
+    }
+
+    public String getField() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("\u001B[32m" + symbolMulti('_', width * 5 + 1));
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                if (field[i][j] == null) {
+                    stringBuilder.append("|    ");
+                    continue;
+                }
+                stringBuilder.append(String.format("| %s ", field[i][j]));
+            }
+            stringBuilder.append("|\n");
+            stringBuilder.append(symbolMulti('_', width * 5 + 1));
+        }
+        stringBuilder.append("\u001B[0m" + "\n" + symbolMulti('_', width * 5 + 1) + "\n");
+        return stringBuilder.toString();
     }
 
     private String symbolMulti(char symbol, int amount) {

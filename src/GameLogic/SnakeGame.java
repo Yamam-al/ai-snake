@@ -37,10 +37,10 @@ public class SnakeGame {
             return GameStatus.GAME_OVER;
         } else if (reward > 0) {
             elements.spawnApple();
-            elements.moveAndGrow(direction);
+            gameField.append(elements.moveAndGrow(direction));
             return GameStatus.APPLE;
         } else {
-            elements.move(direction);
+            gameField.append(elements.move(direction));
             return GameStatus.NOTHING;
         }
     }
