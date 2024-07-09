@@ -43,7 +43,8 @@ public class Gridworld {
     public void printField() {
         if (print) {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("\u001B[32m" + symbolMulti('_', width * 5 + 1));
+            stringBuilder.append("\u001B[32m");
+            stringBuilder.append(symbolMulti('_', width * 5 + 1));
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     if (field[i][j] == null) {
@@ -55,7 +56,9 @@ public class Gridworld {
                 stringBuilder.append("|\n");
                 stringBuilder.append(symbolMulti('_', width * 5 + 1));
             }
-            stringBuilder.append("\u001B[0m" + "\n" + symbolMulti('_', width * 5 + 1) + "\n");
+            stringBuilder.append("\u001B[0m").append("\n");
+            stringBuilder.append(symbolMulti('_', width * 5 + 1));
+            stringBuilder.append("\n");
             System.out.println(stringBuilder);
         }
     }

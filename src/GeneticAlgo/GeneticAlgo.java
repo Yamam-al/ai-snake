@@ -22,7 +22,7 @@ public class GeneticAlgo {
     private final int nodeCount = 4;
     private final int directionsCount = 8;
     private final int elementCount = 3;
-    private final Random random = new Random();
+    private final Random random = new Random(1234);
 
     //parameters
 
@@ -155,7 +155,7 @@ public class GeneticAlgo {
             stepsSurvived++;
 
             if (gameStatus == GameStatus.GAME_OVER) {
-                fitness -= 500 - 100 * applesEaten; // Additional penalty for game over unless the snake has eaten enough apples
+                fitness -= 500;// - 100 * applesEaten; // Additional penalty for game over unless the snake has eaten enough apples
                 break; // Exit the loop if the game is over
             } else if (gameStatus == GameStatus.APPLE) {
                 applesEaten++;
@@ -173,11 +173,9 @@ public class GeneticAlgo {
 
         }
         // Reward for surviving longer
-        fitness += stepsSurvived * 0.1;
+        //fitness += stepsSurvived * 0.1;
 
-        // Final adjustment for apples eaten and distance moved efficiently
-        fitness += applesEaten * 50; // Additional reward for apples eaten
-        fitness += 0.01 * (maxSteps - stepsSurvived); // Small reward for steps survived without game over
+        //fitness += 0.01 * (maxSteps - stepsSurvived); // Small reward for steps survived without game over
         individual.setFitness(fitness);
     }
 
