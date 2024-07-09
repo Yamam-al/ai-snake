@@ -67,7 +67,7 @@ public class Elements {
         return new SnakeNode(position, Direction.getInt(direction));
     }
 
-    public void move(Direction direction) {
+    public String move(Direction direction) {
         // Move head
         Position headPosition = snake.get(0).getPosition();
         Position newHeadPosition = headPosition.copy();

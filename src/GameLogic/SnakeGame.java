@@ -16,6 +16,7 @@ public class SnakeGame {
     private final int appleReward = 1;
     private final int penalty = -1;
     private boolean print;
+    private StringBuilder gameField = new StringBuilder();
 
     public SnakeGame(int width, int height, Random random, boolean print) {
         this.print = print;
@@ -93,5 +94,9 @@ public class SnakeGame {
 
     public int getSnackSize() {
         return elements.getSnakeSize();
+    }
+
+    public StringBuilder getGameField() {
+        return gameField;
     }
 }

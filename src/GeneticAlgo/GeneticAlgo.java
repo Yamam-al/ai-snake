@@ -45,8 +45,8 @@ public class GeneticAlgo {
     private final int heightField = 8;
     private int generation = 0;
     private final int maxGenerations = 100000; // Annahme, kann angepasst werden
-    private final boolean printCSV = true;
-    private final String csvFileName = "fitness_stats_" + LocalDate.now() + LocalTime.now().getHour() + "-" +LocalTime.now().getMinute() + "-" + LocalTime.now().getSecond() +"_SelfAdapting_"+selfAdaptive+".csv";
+    private final boolean printCSV = false;
+    private final String csvFileName = "fitness_stats_" + LocalDate.now() + "--" +LocalTime.now().getHour() + "-" +LocalTime.now().getMinute() + "-" + LocalTime.now().getSecond() +"_SelfAdapting_"+selfAdaptive+".csv";
 
     public void evolve() {
         // Init population
@@ -192,17 +192,6 @@ public class GeneticAlgo {
     }
 
     private void printBestIndividual(Individual bestIndividual) {
-        System.out.println("Best individual: " + bestIndividual);
-        System.out.println("Fitness: " + bestIndividual.getFitness());
-
-        // Replay the moves of the best individual and print each step
-        SnakeGame game = bestIndividual.getSnakeGame();
-        game.reset(); // Reset to initial state
-        game.setPrint(true); // Enable printing of the game state
-        for (Direction direction : bestIndividual.getDirections()) {
-            game.move(direction);
-            // Print the game state after each move
-        }
         System.out.println("Directions: " + bestIndividual.getDirections());
         System.out.println("Steps moved: " + bestIndividual.getDirections().size());
     }

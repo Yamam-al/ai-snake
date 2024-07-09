@@ -140,4 +140,7 @@ public class Individual {
     public void setSmallMutationStepSize(double smallMutationStepSize) {
         this.smallMutationStepSize = smallMutationStepSize;
     }
+    public String getGameField() {
+        return snakeGame.getGameField().toString();
+    }
 }
