@@ -73,12 +73,6 @@ public class Elements {
         Position newHeadPosition = headPosition.copy();
         newHeadPosition.move(direction);
 
-        // Check if the new head position is out of bounds
-        if (newHeadPosition.getX() < 0 || newHeadPosition.getX() >= width ||
-                newHeadPosition.getY() < 0 || newHeadPosition.getY() >= height) {
-            throw new IllegalStateException("Snake head position out of bounds: " + newHeadPosition);
-        }
-
         // Clear current head position
         field.updateField(headPosition, null);
 
@@ -204,8 +198,6 @@ public class Elements {
         int h = height - snakePosition.getY();
         environment[4][1] = h;
         environment[0][1] = snakePosition.getY() + 1;
-        //TODO should the wall distance also be set on diagonals?
-        //TODO Snake
         int minDistance = Integer.MAX_VALUE;
 
         for (int i = 1; i < snake.size(); i++) {
